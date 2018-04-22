@@ -1,16 +1,12 @@
-import * as React from 'react';
+import * as React from 'react'
+import * as GameTypes from 'gameTypes'
 
-export interface SquareProps {
-  value: String;
-  onClick: () => void;
+export default class Square extends React.Component<GameTypes.SquareProps, {}> {
+  public render () {
+    return (
+      <button className="square" onClick={() => this.props.onClick()}>
+        {this.props.value}
+      </button>
+    )
+  }
 }
-
-function Square(props: SquareProps) {
-  return (
-    <button className="square" onClick={() => props.onClick()}>
-      {props.value}
-    </button>
-  );
-}
-
-export default Square;

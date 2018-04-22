@@ -1,12 +1,8 @@
-import * as React from 'react';
-import Square from './Square';
+import * as React from 'react'
+import * as GameTypes from 'gameTypes'
+import Square from './Square'
 
-export interface BoardProps {
-  squares: String[];
-  onClick: (i: number) => void;
-}
-
-class Board extends React.Component<BoardProps, {}> {
+export default class Board extends React.Component<GameTypes.BoardProps, {}> {
   public render() {
     return (
       <div>
@@ -26,7 +22,7 @@ class Board extends React.Component<BoardProps, {}> {
           {this.renderSquare(8)}
         </div>
       </div>
-    );
+    )
   }
 
   private renderSquare(i: number) {
@@ -34,8 +30,6 @@ class Board extends React.Component<BoardProps, {}> {
       <Square
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)} 
-      />);
+      />)
   }
 }
-
-export default Board;
