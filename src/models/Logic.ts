@@ -1,7 +1,7 @@
 import Game from '../components/Game'
 
 export default class Logic {
-  public handleClick(i: number, g: Game) {
+  public static handleClick(i: number, g: Game) {
     const history = g.state.history.slice(0, g.state.stepNumber + 1)
     const current = history[history.length - 1]
     const squares = current.squares.slice()
@@ -21,14 +21,14 @@ export default class Logic {
     })
   }
 
-  public jumpTo(step: number, g: Game) {
+  public static jumpTo(step: number, g: Game) {
     g.setState({
       stepNumber: step,
       xIsNext: (step % 2) === 0
     })
   }
 
-  public calculateWinner(squares: string[]) {
+  public static calculateWinner(squares: string[]) {
     const lines = [
       [0, 1, 2],
       [3, 4, 5],

@@ -3,8 +3,6 @@ import * as GameTypes from 'gameTypes'
 import Logic from '../models/Logic'
 import Board from './Board'
 
-let l = new Logic()
-
 export default class Game extends React.Component<{}, GameTypes.GameState> {
   public constructor(props: {}) {
     super(props)
@@ -20,13 +18,13 @@ export default class Game extends React.Component<{}, GameTypes.GameState> {
   public render() {
     const history: GameTypes.History[] = this.state.history
     const current = history[this.state.stepNumber]
-    const winner = l.calculateWinner(current.squares)
+    const winner = Logic.calculateWinner(current.squares)
 
     const moves = history.map((step, move) => {
       const desc = move ? `Go to move #${move}` : 'Go to game start'
       return (
         <li key={move}>
-          <button onClick={() => l.jumpTo(move, this)}>{desc}</button>
+          <button onClick={() => Logic.jumpTo(move, this)}>{desc}</button>
         </li>
       )
     })
@@ -43,7 +41,7 @@ export default class Game extends React.Component<{}, GameTypes.GameState> {
         <div className="game-board">
           <Board
             squares={current.squares}
-            onClick={(i: number) => l.handleClick(i, this)}
+            onClick={(i: number) => Logic.handleClick(i, this)}
           />
         </div>
         <div className="game-info">
