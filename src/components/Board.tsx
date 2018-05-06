@@ -1,8 +1,12 @@
 import * as React from 'react'
-import * as GameTypes from 'gameTypes'
 import Square from './Square'
 
-export default class Board extends React.Component<GameTypes.BoardProps, {}> {
+interface BoardProps {
+  squares: string[]
+  onClick: (i: number) => void
+}
+
+export default class Board extends React.Component<BoardProps, {}> {
   public render() {
     return (
       <div>

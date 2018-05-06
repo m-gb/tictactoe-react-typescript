@@ -1,7 +1,11 @@
 import * as React from 'react'
-import * as GameTypes from 'gameTypes'
 
-export default class Square extends React.Component<GameTypes.SquareProps, {}> {
+interface SquareProps {
+  value: string
+  onClick: () => void
+}
+
+export default class Square extends React.Component<SquareProps, {}> {
   public render () {
     return (
       <button className="square" onClick={() => this.props.onClick()}>

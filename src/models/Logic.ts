@@ -1,10 +1,11 @@
 import Game from '../components/Game'
+import { History } from '../components/Game'
 
 export default class Logic {
   public static handleClick(i: number, g: Game) {
-    const history = g.state.history.slice(0, g.state.stepNumber + 1)
-    const current = history[history.length - 1]
-    const squares = current.squares.slice()
+    const history: History[] = g.state.history.slice(0, g.state.stepNumber + 1)
+    const current: History = history[history.length - 1]
+    const squares: string[] = current.squares.slice()
 
     if (this.calculateWinner(squares) || squares[i]) {
       return

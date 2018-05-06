@@ -1,9 +1,18 @@
 import * as React from 'react'
-import * as GameTypes from 'gameTypes'
 import Logic from '../models/Logic'
 import Board from './Board'
 
-export default class Game extends React.Component<{}, GameTypes.GameState> {
+export interface History {
+  squares: string[]
+}
+
+interface GameState {
+  history: History[]
+  stepNumber: number
+  xIsNext: boolean
+}
+
+export default class Game extends React.Component<{}, GameState> {
   public constructor(props: {}) {
     super(props)
     this.state = {
@@ -16,9 +25,9 @@ export default class Game extends React.Component<{}, GameTypes.GameState> {
   }
 
   public render() {
-    const history: GameTypes.History[] = this.state.history
-    const current = history[this.state.stepNumber]
-    const winner = Logic.calculateWinner(current.squares)
+    const history: History[] = this.state.history
+    const current: History = history[this.state.stepNumber]
+    const winner: string|null = Logic.calculateWinner(current.squares)
 
     const moves = history.map((step, move) => {
       const desc = move ? `Go to move #${move}` : 'Go to game start'
