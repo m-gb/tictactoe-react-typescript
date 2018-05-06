@@ -1,39 +1,20 @@
 import * as React from 'react'
-import Logic from '../models/Logic'
+import Logic, { History } from '../models/Logic'
 import Board from './Board'
 
-export interface History {
-  squares: string[]
-}
-
-interface GameState {
-  history: History[]
-  stepNumber: number
-  xIsNext: boolean
-}
-
-export default class Game extends React.Component<{}, GameState> {
-  public constructor(props: {}) {
-    super(props)
-    this.state = {
-      history: [{
-        squares: Array(9).fill(null),
-      }],
-      stepNumber: 0,
-      xIsNext: true
-    }
-  }
+export default class Game extends React.Component {
+  public gameLogic: Logic = new Logic()
 
   public render() {
-    const history: History[] = this.state.history
-    const current: History = history[this.state.stepNumber]
-    const winner: string|null = Logic.calculateWinner(current.squares)
+    const history: History[] = this.gameLogic.state.history
+    const current: History = history[this.gameLogic.state.stepNumber]
+    const winner: string|null = this.gameLogic.calculateWinner(current.squares)
 
     const moves = history.map((step, move) => {
-      const desc = move ? `Go to move #${move}` : 'Go to game start'
+      const desc: string = move ? `Go to move #${move}` : 'Go to game start'
       return (
         <li key={move}>
-          <button onClick={() => Logic.jumpTo(move, this)}>{desc}</button>
+          <button onClick={() => this.setState(() => this.gameLogic.jumpTo(move))}>{desc}</button>
         </li>
       )
     })
@@ -42,7 +23,7 @@ export default class Game extends React.Component<{}, GameState> {
     if (winner) {
       status = `Winner: ${winner}`
     } else {
-      status = `Next player:  ${(this.state.xIsNext ? 'X' : 'O')}`
+      status = `Next player:  ${(this.gameLogic.state.xIsNext ? 'X' : 'O')}`
     }
 
     return (
@@ -50,7 +31,7 @@ export default class Game extends React.Component<{}, GameState> {
         <div className="game-board">
           <Board
             squares={current.squares}
-            onClick={(i: number) => Logic.handleClick(i, this)}
+            onClick={(i: number) => this.setState(() => this.gameLogic.handleClick(i))}
           />
         </div>
         <div className="game-info">
