@@ -1,44 +1,78 @@
 import * as React from 'react'
-import Logic, { History } from '../models/Logic'
+import Logic, { GameHistory } from '../models/Logic'
 import Board from './Board'
 
-export default class Game extends React.Component {
-  public gameLogic: Logic = new Logic()
+interface GameProps {
+  logic: Logic
+}
 
+interface HistoryProps {
+  history: GameHistory[]
+  logic: Logic
+}
+
+interface StatusProps {
+  current: GameHistory
+  logic: Logic
+}
+
+export default class Game extends React.Component<GameProps, {}> {
   public render() {
-    const history: History[] = this.gameLogic.state.history
-    const current: History = history[this.gameLogic.state.stepNumber]
-    const winner: string|null = this.gameLogic.calculateWinner(current.squares)
-
-    const moves = history.map((step, move) => {
-      const desc: string = move ? `Go to move #${move}` : 'Go to game start'
-      return (
-        <li key={move}>
-          <button onClick={() => this.setState(() => this.gameLogic.jumpTo(move))}>{desc}</button>
-        </li>
-      )
-    })
-
-    let status: string
-    if (winner) {
-      status = `Winner: ${winner}`
-    } else {
-      status = `Next player:  ${(this.gameLogic.state.xIsNext ? 'X' : 'O')}`
-    }
-
+    const history: GameHistory[] = this.props.logic.state.history
+    const current: GameHistory = history[this.props.logic.state.stepNumber]
     return (
       <div className="game">
         <div className="game-board">
           <Board
             squares={current.squares}
-            onClick={(i: number) => this.setState(() => this.gameLogic.handleClick(i))}
+            onClick={(i: number) => {
+              this.props.logic.handleClick(i)
+            }}
           />
         </div>
         <div className="game-info">
-          <div>{status}</div>
-          <ol>{moves}</ol>
+          <Status 
+            current={current}
+            logic={this.props.logic}
+          />
+          <History 
+            history={history}
+            logic={this.props.logic}
+          />
         </div>
       </div>
     )
+  }
+}
+
+class History extends React.Component<HistoryProps, {}> {
+  public render() {
+    const moves = this.props.history.map((step, move) => {
+      const desc: string = move ? `Go to move #${move}` : 'Go to game start'
+      return (
+        <li key={move}>
+          <button 
+            onClick={() => {
+              this.props.logic.jumpTo(move)
+            }}
+          >{desc}
+          </button>
+        </li> 
+      )
+    })
+    return <ol>{moves}</ol>
+  }
+}
+
+class Status extends React.Component<StatusProps, {}> {
+  public render() {
+    const winner: string | null = this.props.logic.calculateWinner(this.props.current.squares)
+    let status: string
+    if (winner) {
+      status = `Winner: ${winner}`
+    } else {
+      status = `Next player:  ${(this.props.logic.state.xIsNext ? 'X' : 'O')}`
+    }
+    return <div>{status}</div>
   }
 }

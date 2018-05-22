@@ -1,15 +1,16 @@
-export interface History {
+export interface GameHistory {
   squares: string[]
 }
 
 export interface GameState {
-  history: History[]
+  history: GameHistory[]
   stepNumber: number
   xIsNext: boolean
 }
 
 export default class Logic {
   public state: GameState
+  private stateChangeCallback: (() => void) | undefined
 
   public constructor() {
     this.state = {
@@ -21,35 +22,39 @@ export default class Logic {
     }
   }
 
-  public handleClick(i: number) {
+  public handleClick(i: number): void {
     const history = this.state.history.slice(0, this.state.stepNumber + 1)
     const current = history[history.length - 1]
     const squares = current.squares.slice()
-
+  
     if (this.calculateWinner(squares) || squares[i]) {
       return
     }
-
+  
     squares[i] = this.state.xIsNext ? 'X' : 'O'
-
-    return this.state = {
+  
+    let modifiedState = {
       history: history.concat([{
         squares: squares
       }]),
       xIsNext: !this.state.xIsNext,
       stepNumber: history.length
     }
+
+    this.handleChange(modifiedState)
   }
 
-  public jumpTo(step: number) {
-    return this.state = {
-      history: this.state.history,
+  public jumpTo(step: number): void {
+    let modifiedState = {
+      history: this.state.history.slice(0, (step + 1)), // history: this.state.history,
       stepNumber: step,
       xIsNext: (step % 2) === 0
     }
+
+    this.handleChange(modifiedState)
   }
 
-  public calculateWinner(squares: string[]) {
+  public calculateWinner (squares: string[]): string | null {
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -67,5 +72,20 @@ export default class Logic {
       }
     }
     return null
+  }
+
+  public onStateChange(callback: () => void): void {
+    this.stateChangeCallback = callback
+  }
+
+  private handleChange(state: GameState): void {
+    this.state = state
+    this.runStateChangeCallback()
+  }
+
+  private runStateChangeCallback(): void {
+    if (this.stateChangeCallback) {
+      this.stateChangeCallback()
+    }
   }
 }
