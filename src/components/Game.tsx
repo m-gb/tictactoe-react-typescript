@@ -1,6 +1,7 @@
 import * as React from 'react'
 import Logic, { GameHistory } from '../models/Logic'
 import Board from './Board'
+import { observer } from 'mobx-react'
 
 interface GameProps {
   logic: Logic
@@ -16,6 +17,7 @@ interface StatusProps {
   logic: Logic
 }
 
+@observer
 export default class Game extends React.Component<GameProps, {}> {
   public render() {
     const history: GameHistory[] = this.props.logic.state.history
@@ -45,6 +47,7 @@ export default class Game extends React.Component<GameProps, {}> {
   }
 }
 
+@observer
 class History extends React.Component<HistoryProps, {}> {
   public render() {
     const moves = this.props.history.map((step, move) => {
@@ -64,6 +67,7 @@ class History extends React.Component<HistoryProps, {}> {
   }
 }
 
+@observer
 class Status extends React.Component<StatusProps, {}> {
   public render() {
     const winner: string | null = this.props.logic.calculateWinner(this.props.current.squares)

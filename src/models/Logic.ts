@@ -1,3 +1,5 @@
+import { action, observable } from 'mobx'
+
 export interface GameHistory {
   squares: string[]
 }
@@ -9,8 +11,7 @@ export interface GameState {
 }
 
 export default class Logic {
-  public state: GameState
-  private stateChangeCallback: (() => void) | undefined
+  @observable state: GameState
 
   public constructor() {
     this.state = {
@@ -22,6 +23,7 @@ export default class Logic {
     }
   }
 
+  @action
   public handleClick(i: number): void {
     const history = this.state.history.slice(0, this.state.stepNumber + 1)
     const current = history[history.length - 1]
@@ -33,25 +35,22 @@ export default class Logic {
   
     squares[i] = this.state.xIsNext ? 'X' : 'O'
   
-    let modifiedState = {
+    this.state = {
       history: history.concat([{
         squares: squares
       }]),
       xIsNext: !this.state.xIsNext,
       stepNumber: history.length
     }
-
-    this.handleChange(modifiedState)
   }
 
+  @action
   public jumpTo(step: number): void {
-    let modifiedState = {
-      history: this.state.history.slice(0, (step + 1)), // history: this.state.history,
+    this.state = {
+      history: this.state.history.slice(0, (step + 1)),
       stepNumber: step,
       xIsNext: (step % 2) === 0
     }
-
-    this.handleChange(modifiedState)
   }
 
   public calculateWinner (squares: string[]): string | null {
@@ -72,20 +71,5 @@ export default class Logic {
       }
     }
     return null
-  }
-
-  public onStateChange(callback: () => void): void {
-    this.stateChangeCallback = callback
-  }
-
-  private handleChange(state: GameState): void {
-    this.state = state
-    this.runStateChangeCallback()
-  }
-
-  private runStateChangeCallback(): void {
-    if (this.stateChangeCallback) {
-      this.stateChangeCallback()
-    }
   }
 }
